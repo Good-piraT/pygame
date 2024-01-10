@@ -57,10 +57,9 @@ class Board:  # класс, реализующий игровое поле
   def get_button(self, mouse_pos):
     mouse_x = mouse_pos[0]
     mouse_y = mouse_pos[1]
-    if mouse_x >= 87 and mouse_x <= 87 + 226 and mouse_y >= 423 and mouse_y <= 54 + 423:
-      return True
-    else:
-      return False
+    x = mouse_x >= 87 and mouse_x <= 87 + 226
+    y = mouse_y >= 423 and mouse_y <= 54 + 423
+    return x and y
 
   def button_act(self):
     print("I'M BUTTON")
@@ -78,10 +77,40 @@ class Board:  # класс, реализующий игровое поле
 
   def move(self,
            direction):  #делает ход, двигая клетки в указанном направлении
-    if direction == 'right':
-      for row in range(4):
-        pass
-    self.ones()
+    #считать кол-во клеток прохода
+    if direction == 'left' or direction == 'right':
+      for i in range(4):
+        for q in range(4):
+          elem = self.board[i][q]
+          row = self.board[i]
+          if elem > 0:
+            zero_nums, ind = zero_count(row)
+            if zero_nums > 0:
+              right_zero = max(ind)
+              print('ПРАВЫЙ НОЛЬ', right_zero)
+              left_zero = min(ind)
+              if direction == 'right':
+                jump = max(ind) - row.index(elem)
+                print('jump', jump)
+                print('moved to right', elem)
+                self.board[i][right_zero] = elem
+                self.board[i][q] = 0
+                print('ТАБЛИЦА:')
+                for row in self.board:
+                  print(row)
+                print(right_zero)
+              elif direction == 'left':
+                jump = row.index(elem) - min(ind)
+                print('jump', jump)
+                print('moved to left')
+                self.board[i][left_zero] = elem
+                self.board[i][q] = 0
+                print('ТАБЛИЦА:')
+                for row in self.board:
+                  print(row)
+                print(left_zero)
+
+    #self.ones()
 
   def ones(self):  #добавляет еще одну единицу на доску в путом месте
     br = False
@@ -144,6 +173,7 @@ board = Board(4, 4)
 board.set_view(0, 0, 100)
 b_color = pygame.Color(240, 248, 255)
 running = True
+board.ones()
 while running:
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
