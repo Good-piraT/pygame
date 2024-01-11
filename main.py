@@ -21,6 +21,15 @@ class Board:  # класс, реализующий игровое поле
     self.top = top
     self.cell_size = cell_size
 
+  def texting(self, number, coos):
+    x = coos[0]
+    y = coos[1]
+    font = pygame.font.Font(None, 10)
+    text = font.render(str(number), True, 'black')
+    text_x = x - text.get_width() // 2
+    text_y = y - text.get_height() // 2
+    return text, (text_x, text_y)
+
   def render(self, screen, color='black'):  #рендер
     for x in range(self.width):
       for y in range(self.height):
@@ -31,14 +40,21 @@ class Board:  # класс, реализующий игровое поле
               (self.left + self.cell_size * x, self.top + self.cell_size * y,
                self.cell_size, self.cell_size), 2)
         else:
+          
           if elem == 1:
-            color = 'red'
+            color = pygame.Color(199, 0, 57)
+            text_mass = self.texting(1, (self.left + self.cell_size * x, self.top + self.cell_size * y))
           elif elem == 2:
-            color = 'orange'
+            color = pygame.Color(255, 87, 51)
+            text_mass = self.texting(2, (self.left + self.cell_size * x, self.top + self.cell_size * y))
+          else:
+            color = 'magenta'
+            text_mass = self.texting(1134, (self.left + self.cell_size * x, self.top + self.cell_size * y))
           pygame.draw.rect(
               screen, color,
               (self.left + self.cell_size * x, self.top + self.cell_size * y,
                self.cell_size, self.cell_size))
+          screen.blit(text_mass[0], text_mass[1])
 
   def get_cell(self, mouse_pos):  #дает координаты клетки при клике мышкой
     mx = mouse_pos[0]
