@@ -9,6 +9,7 @@ class Board:  # класс, реализующий игровое поле
     self.width = width
     self.height = height
     self.board = [[0] * width for _ in range(height)]
+    self.change_board = [[0] * width for _ in range(height)]
     self.left = 10
     self.top = 10
     self.cell_size = 30
@@ -64,6 +65,7 @@ class Board:  # класс, реализующий игровое поле
   def button_act(self):
     print("I'M BUTTON")
     self.board = [[0] * self.width for _ in range(self.height)]
+    self.ones()
 
   def on_click(self, cell_coords):  #пишет координаты клеток в консоль
     print('board cell', cell_coords)
@@ -78,7 +80,19 @@ class Board:  # класс, реализующий игровое поле
   def move(self,
            direction):  #делает ход, двигая клетки в указанном направлении
     #считать кол-во клеток прохода
-    if direction == 'left' or direction == 'right':
+    if direction == 'left' :
+      for i in range(4):
+        for q in range(4):
+          elem = self.board[i][q]
+          row = self.board[i]
+          if elem > 0:
+            zero_nums, ind = zero_count(row)
+            if zero_nums > 0:
+              left_zero = min(ind)
+              self.change_board[i][left_zero] = elem
+      self.board = self.change_board
+      self.change_board = [[0] * self.width for _ in range(self.height)]
+    if direction == 'right':
       for i in range(4):
         for q in range(4):
           elem = self.board[i][q]
@@ -87,32 +101,16 @@ class Board:  # класс, реализующий игровое поле
             zero_nums, ind = zero_count(row)
             if zero_nums > 0:
               right_zero = max(ind)
-              print('ПРАВЫЙ НОЛЬ', right_zero)
-              left_zero = min(ind)
-              if direction == 'right':
-                jump = max(ind) - row.index(elem)
-                print('jump', jump)
-                print('moved to right', elem)
-                self.board[i][right_zero] = elem
-                self.board[i][q] = 0
-                print('ТАБЛИЦА:')
-                for row in self.board:
-                  print(row)
-                print(right_zero)
-              elif direction == 'left':
-                jump = row.index(elem) - min(ind)
-                print('jump', jump)
-                print('moved to left')
-                self.board[i][left_zero] = elem
-                self.board[i][q] = 0
-                print('ТАБЛИЦА:')
-                for row in self.board:
-                  print(row)
-                print(left_zero)
+              self.change_board[i][right_zero] = elem
+      print(self.change_board)
+      self.board = self.change_board
+      self.change_board = [[0] * self.width for _ in range(self.height)]
+    self.ones()
+    print('ТАБЛИЦА:')
+    for row in self.board:
+      print(row)
 
-    #self.ones()
-
-  def ones(self):  #добавляет еще одну единицу на доску в путом месте
+  def ones(self, total=False):  #добавляет еще одну единицу на доску в путом месте
     br = False
     for row in range(4):
       x = randint(0, 1)
@@ -120,10 +118,7 @@ class Board:  # класс, реализующий игровое поле
         for elem in range(4):
           num_zeros, index = zero_count(
               self.board[row])  #количество нулей, тх индексы
-          q = randint(0, num_zeros - 1)
-          print('ноль оказалась q-тым', q, end=' ')
-          print('ряд', row, 'из индексов', index, 'из своих собратьев',
-                num_zeros)
+          q = randint(0, num_zeros)if total else randint(0, num_zeros - 1)
           self.board[row][index[q]] = 1
           br = True
           break
