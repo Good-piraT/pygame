@@ -40,16 +40,19 @@ class Board:  # класс, реализующий игровое поле
               (self.left + self.cell_size * x, self.top + self.cell_size * y,
                self.cell_size, self.cell_size), 2)
         else:
-          
+
           if elem == 1:
             color = pygame.Color(199, 0, 57)
-            text_mass = self.texting(1, (self.left + self.cell_size * x, self.top + self.cell_size * y))
+            text_mass = self.texting(1, (self.left + self.cell_size * x,
+                                         self.top + self.cell_size * y))
           elif elem == 2:
             color = pygame.Color(255, 87, 51)
-            text_mass = self.texting(2, (self.left + self.cell_size * x, self.top + self.cell_size * y))
+            text_mass = self.texting(2, (self.left + self.cell_size * x,
+                                         self.top + self.cell_size * y))
           else:
             color = 'magenta'
-            text_mass = self.texting(1134, (self.left + self.cell_size * x, self.top + self.cell_size * y))
+            text_mass = self.texting(1134, (self.left + self.cell_size * x,
+                                            self.top + self.cell_size * y))
           pygame.draw.rect(
               screen, color,
               (self.left + self.cell_size * x, self.top + self.cell_size * y,
@@ -96,37 +99,32 @@ class Board:  # класс, реализующий игровое поле
   def move(self,
            direction):  #делает ход, двигая клетки в указанном направлении
     #считать кол-во клеток прохода
-    if direction == 'left' :
-      for i in range(4):
-        for q in range(4):
-          elem = self.board[i][q]
-          row = self.board[i]
-          if elem > 0:
-            zero_nums, ind = zero_count(row)
-            if zero_nums > 0:
-              left_zero = min(ind)
-              self.change_board[i][left_zero] = elem
-      self.board = self.change_board
-      self.change_board = [[0] * self.width for _ in range(self.height)]
+    break_rule = False
     if direction == 'right':
       for i in range(4):
-        for q in range(4):
-          elem = self.board[i][q]
+        for q in range(4, 0, -1):
           row = self.board[i]
+          elem = self.board[i][q]
           if elem > 0:
-            zero_nums, ind = zero_count(row)
-            if zero_nums > 0:
-              right_zero = max(ind)
-              self.change_board[i][right_zero] = elem
-      print(self.change_board)
-      self.board = self.change_board
-      self.change_board = [[0] * self.width for _ in range(self.height)]
+            pass
+          else:
+            break
+            break_rule = True
+        if break_rule == True:
+          break
+    elif direction == 'left':
+      pass
+    elif direction == 'up':
+      pass
+    else:  #down
+      pass
     self.ones()
     print('ТАБЛИЦА:')
     for row in self.board:
       print(row)
 
-  def ones(self, total=False):  #добавляет еще одну единицу на доску в путом месте
+  def ones(self,
+           total=False):  #добавляет еще одну единицу на доску в путом месте
     br = False
     for row in range(4):
       x = randint(0, 1)
@@ -134,7 +132,7 @@ class Board:  # класс, реализующий игровое поле
         for elem in range(4):
           num_zeros, index = zero_count(
               self.board[row])  #количество нулей, тх индексы
-          q = randint(0, num_zeros)if total else randint(0, num_zeros - 1)
+          q = randint(0, num_zeros) if total else randint(0, num_zeros - 1)
           self.board[row][index[q]] = 1
           br = True
           break
