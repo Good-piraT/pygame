@@ -84,7 +84,7 @@ class Board:  # класс, реализующий игровое поле
   def button_act(self):
     print("I'M BUTTON")
     self.board = [[0] * self.width for _ in range(self.height)]
-    self.ones()
+    self.ones(True)
 
   def on_click(self, cell_coords):  #пишет координаты клеток в консоль
     print('board cell', cell_coords)
@@ -96,33 +96,60 @@ class Board:  # класс, реализующий игровое поле
     if is_button:
       self.button_act()
 
+  def check_row_right(self, row, elem):
+      for i in range(3, -1, -1):
+        print(i)
+        if row[i] == 0:
+          return 'trans', i
+        if row[i] == elem:
+          return 'plus', i
+      return 'no move', -1
+    
+  def check_row_left(self, row, elem):
+    for i in range(4):
+      if row[i] == 0:
+        no_move = False
+        return 'trans', i
+      if row[i] == elem:
+        no_move = False
+        return 'plus', i
+    return 'no move', -1
+        
   def move(self,
            direction):  #делает ход, двигая клетки в указанном направлении
     #считать кол-во клеток прохода
     break_rule = False
     if direction == 'right':
       for i in range(4):
-        for q in range(4, 0, -1):
+        for q in range(3, -1, -1):
           row = self.board[i]
           elem = self.board[i][q]
           if elem > 0:
-            pass
-          else:
-            break
-            break_rule = True
-        if break_rule == True:
-          break
+            movement_type, index = self.check_row_right(row, elem)
+            print(movement_type, index)
+            if movement_type == 'trans':
+              self.board[i][q] = 0
+              self.board[i][index] = elem
     elif direction == 'left':
-      pass
+      for i in range(4):
+        for q in range(4):
+          row = self.board[i]
+          elem = self.board[i][q]
+          if elem > 0:
+            movement_type, index = self.check_row_left(row, elem)
+            if movement_type == 'trans':
+              self.board[i][q] = 0
+              self.board[i][index] = elem
+              
     elif direction == 'up':
       pass
     else:  #down
       pass
-    self.ones()
+    #self.ones()
     print('ТАБЛИЦА:')
     for row in self.board:
       print(row)
-
+  
   def ones(self,
            total=False):  #добавляет еще одну единицу на доску в путом месте
     br = False
@@ -132,7 +159,7 @@ class Board:  # класс, реализующий игровое поле
         for elem in range(4):
           num_zeros, index = zero_count(
               self.board[row])  #количество нулей, тх индексы
-          q = randint(0, num_zeros) if total else randint(0, num_zeros - 1)
+          q = randint(0, num_zeros - 1)
           self.board[row][index[q]] = 1
           br = True
           break
