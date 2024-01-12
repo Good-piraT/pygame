@@ -154,8 +154,14 @@ class Board:  # класс, реализующий игровое поле
            total=False):  #добавляет еще одну единицу на доску в путом месте
     br = False
     for row in range(4):
-      x = randint(0, 1)
-      if 0 in self.board[row] and x == 1:
+      if total:
+        ready = []
+        for i in range(4):
+          if 0 in self.board[i]:
+            ready.append(i)
+        print(ready)
+        y = randint(0, len(ready) - 1)
+        row = ready[y]
         for elem in range(4):
           num_zeros, index = zero_count(
               self.board[row])  #количество нулей, тх индексы
@@ -165,6 +171,18 @@ class Board:  # класс, реализующий игровое поле
           break
         if br == True:
           break
+      else:
+        x = randint(0, 1)
+        if 0 in self.board[row] and x == 1:
+          for elem in range(4):
+            num_zeros, index = zero_count(
+                self.board[row])  #количество нулей, тх индексы
+            q = randint(0, num_zeros - 1)
+            self.board[row][index[q]] = 1
+            br = True
+            break
+          if br == True:
+            break
 
 
 pygame.init()
