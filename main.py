@@ -140,9 +140,15 @@ class Board:  # класс, реализующий игровое поле
             if movement_type == 'trans':
               self.board[i][q] = 0
               self.board[i][index] = elem
-              
+            elif movement_type == 'plus':
+              self.board[i][q] = 0
+              self.board[i][index] = elem*2
     elif direction == 'up':
-      pass
+      disg_board = [[0] * self.width for _ in range(self.height)]
+      for y in range(4): # запись всех q элементов в disf_row[i]
+        for x in range(4):
+          disg_board[y][x] = self.board[x][y-4]
+      print('disg_row:', disg_board) #disg_board - та же доска, только перевернутая для легкого взаимодействия!
     else:  #down
       pass
     #self.ones()
