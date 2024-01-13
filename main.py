@@ -42,15 +42,39 @@ class Board:  # класс, реализующий игровое поле
         else:
 
           if elem == 1:
-            color = pygame.Color(199, 0, 57)
+            color = pygame.Color(255, 228, 196)
             text_mass = self.texting(1, (self.left + self.cell_size * x,
                                          self.top + self.cell_size * y))
           elif elem == 2:
-            color = pygame.Color(255, 87, 51)
+            color = pygame.Color(222, 184, 135)
             text_mass = self.texting(2, (self.left + self.cell_size * x,
                                          self.top + self.cell_size * y))
-          else:
-            color = 'magenta'
+          elif elem == 4:
+            color = pygame.Color(244, 164, 96)
+            text_mass = self.texting(1134, (self.left + self.cell_size * x,
+                                            self.top + self.cell_size * y))
+          elif elem == 16:
+            color = pygame.Color(205, 133, 63)
+            text_mass = self.texting(1134, (self.left + self.cell_size * x,
+                                            self.top + self.cell_size * y))
+          elif elem == 32:
+            color = pygame.Color(210, 105, 30)
+            text_mass = self.texting(1134, (self.left + self.cell_size * x,
+                                            self.top + self.cell_size * y))
+          elif elem == 64:
+            color = pygame.Color(160, 82, 45)
+            text_mass = self.texting(1134, (self.left + self.cell_size * x,
+                                            self.top + self.cell_size * y))
+          elif elem == 128:
+            color = pygame.Color(139, 69, 19)
+            text_mass = self.texting(1134, (self.left + self.cell_size * x,
+                                            self.top + self.cell_size * y))
+          elif elem == 256:
+            color = pygame.Color(165, 42, 42)
+            text_mass = self.texting(1134, (self.left + self.cell_size * x,
+                                            self.top + self.cell_size * y))
+          elif elem == 256:
+            color = pygame.Color(128, 0, 0)
             text_mass = self.texting(1134, (self.left + self.cell_size * x,
                                             self.top + self.cell_size * y))
           pygame.draw.rect(
@@ -66,7 +90,7 @@ class Board:  # класс, реализующий игровое поле
     y = mouse_y >= 423 and mouse_y <= 54 + 423
     return x and y
 
-  def get_click(self, mouse_pos): #активирует кнопку при клике мышкой
+  def get_click(self, mouse_pos):  #активирует кнопку при клике мышкой
     if self.get_button(mouse_pos):
       self.board = [[0] * self.width for _ in range(self.height)]
       self.ones(True)
@@ -232,7 +256,7 @@ icon = load_image("icon.png")
 pygame.display.set_icon(icon)
 board = Board(4, 4)
 board.set_view(0, 0, 100)
-b_color = pygame.Color(240, 248, 255)
+b_color = pygame.Color(255, 245, 238)
 running = True
 board.ones()
 while running:
