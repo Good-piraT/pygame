@@ -59,21 +59,6 @@ class Board:  # класс, реализующий игровое поле
                self.cell_size, self.cell_size))
           screen.blit(text_mass[0], text_mass[1])
 
-  def get_cell(self, mouse_pos):  #дает координаты клетки при клике мышкой
-    mx = mouse_pos[0]
-    my = mouse_pos[1]
-    rx, ry = (self.left, self.top)
-    lx, ly = (self.left + self.cell_size * self.width,
-              self.top + self.cell_size * self.height)
-    if mx <= rx or mx >= lx or my <= ry or my >= ly:
-      return None
-    else:
-      inner_mx = mx - self.left
-      inner_my = my - self.top
-      cell_column = inner_mx // self.cell_size
-      cell_row = inner_my // self.cell_size
-      return cell_row, cell_column
-
   def get_button(self, mouse_pos):
     mouse_x = mouse_pos[0]
     mouse_y = mouse_pos[1]
@@ -81,20 +66,10 @@ class Board:  # класс, реализующий игровое поле
     y = mouse_y >= 423 and mouse_y <= 54 + 423
     return x and y
 
-  def button_act(self):
-    self.board = [[0] * self.width for _ in range(self.height)]
-    self.ones(True)
-
-  def on_click(self, cell_coords):  #пишет координаты клеток в консоль
-    #print('board cell', cell_coords)
-    pass
-
-  def get_click(self, mouse_pos):  #связующий между get_cell и on_click
-    is_button = self.get_button(mouse_pos)
-    cell = self.get_cell(mouse_pos)
-    self.on_click(cell)
-    if is_button:
-      self.button_act()
+  def get_click(self, mouse_pos): #активирует кнопку при клике мышкой
+    if self.get_button(mouse_pos):
+      self.board = [[0] * self.width for _ in range(self.height)]
+      self.ones(True)
 
   def check_row_right(self, row, elem):
     for i in range(3, -1, -1):
@@ -133,10 +108,9 @@ class Board:  # класс, реализующий игровое поле
           row = self.board[i]
           elem = self.board[i][q]
           if elem > 0:
+            movement_type, index = self.check_row_left(row, elem)
             if q == 0:
               movement_type = 'no move'
-            
-            movement_type, index = self.check_row_left(row, elem)
             if movement_type == 'trans':
               self.board[i][q] = 0
               self.board[i][index] = elem
@@ -145,7 +119,7 @@ class Board:  # класс, реализующий игровое поле
               self.board[i][index] = elem * 2
     elif direction == 'up':
       disg_board = [[0] * self.width for _ in range(self.height)]
-      for y in range(4):  # запись всех q элементов в disf_row[i]
+      for y in range(4):  # запись всех q элементов в disg_row[i]
         for x in range(4):
           disg_board[y][x] = self.board[x][y - 4]
       for i in range(4):
@@ -154,18 +128,20 @@ class Board:  # класс, реализующий игровое поле
           elem = disg_board[i][q]
           if elem > 0:
             movement_type, index = self.check_row_left(row, elem)
+            if q == 0:
+              movement_type = 'no move'
             if movement_type == 'trans':
               disg_board[i][q] = 0
               disg_board[i][index] = elem
             elif movement_type == 'plus':
               disg_board[i][q] = 0
               disg_board[i][index] = elem * 2
-      for y in range(4):  # запись всех q элементов в disf_row[i]
+      for y in range(4):  # запись всех q элементов в disg_row[i]
         for x in range(4):
           self.board[y][x] = disg_board[x][y - 4]
     else:  #down
       disg_board = [[0] * self.width for _ in range(self.height)]
-      for y in range(4):  # запись всех q элементов в disf_row[i]
+      for y in range(4):  # запись всех q элементов в disg_row[i]
         for x in range(4):
           disg_board[y][x] = self.board[x][y - 4]
       for i in range(4):
@@ -177,10 +153,10 @@ class Board:  # класс, реализующий игровое поле
             if movement_type == 'trans':
               disg_board[i][q] = 0
               disg_board[i][index] = elem
-      for y in range(4):  # запись всех q элементов в disf_row[i]
+      for y in range(4):  # запись всех q элементов в disg_row[i]
         for x in range(4):
           self.board[y][x] = disg_board[x][y - 4]
-    #self.ones()
+    self.ones()
 
   def ones(self,
            total=False):  #добавляет еще одну единицу на доску в путом месте
