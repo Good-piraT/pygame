@@ -82,12 +82,12 @@ class Board:  # класс, реализующий игровое поле
     return x and y
 
   def button_act(self):
-    print("I'M BUTTON")
     self.board = [[0] * self.width for _ in range(self.height)]
     self.ones(True)
 
   def on_click(self, cell_coords):  #пишет координаты клеток в консоль
-    print('board cell', cell_coords)
+    #print('board cell', cell_coords)
+    pass
 
   def get_click(self, mouse_pos):  #связующий между get_cell и on_click
     is_button = self.get_button(mouse_pos)
@@ -97,14 +97,13 @@ class Board:  # класс, реализующий игровое поле
       self.button_act()
 
   def check_row_right(self, row, elem):
-      for i in range(3, -1, -1):
-        print(i)
-        if row[i] == 0:
-          return 'trans', i
-        if row[i] == elem:
-          return 'plus', i
-      return 'no move', -1
-    
+    for i in range(3, -1, -1):
+      if row[i] == 0:
+        return 'trans', i
+      if row[i] == elem:
+        return 'plus', i
+    return 'no move', -1
+
   def check_row_left(self, row, elem):
     for i in range(4):
       if row[i] == 0:
@@ -114,10 +113,9 @@ class Board:  # класс, реализующий игровое поле
         no_move = False
         return 'plus', i
     return 'no move', -1
-        
+
   def move(self,
            direction):  #делает ход, двигая клетки в указанном направлении
-    #считать кол-во клеток прохода
     break_rule = False
     if direction == 'right':
       for i in range(4):
@@ -126,7 +124,6 @@ class Board:  # класс, реализующий игровое поле
           elem = self.board[i][q]
           if elem > 0:
             movement_type, index = self.check_row_right(row, elem)
-            print(movement_type, index)
             if movement_type == 'trans':
               self.board[i][q] = 0
               self.board[i][index] = elem
@@ -136,26 +133,55 @@ class Board:  # класс, реализующий игровое поле
           row = self.board[i]
           elem = self.board[i][q]
           if elem > 0:
+            if q == 0:
+              movement_type = 'no move'
+            
             movement_type, index = self.check_row_left(row, elem)
             if movement_type == 'trans':
               self.board[i][q] = 0
               self.board[i][index] = elem
             elif movement_type == 'plus':
               self.board[i][q] = 0
-              self.board[i][index] = elem*2
+              self.board[i][index] = elem * 2
     elif direction == 'up':
       disg_board = [[0] * self.width for _ in range(self.height)]
-      for y in range(4): # запись всех q элементов в disf_row[i]
+      for y in range(4):  # запись всех q элементов в disf_row[i]
         for x in range(4):
-          disg_board[y][x] = self.board[x][y-4]
-      print('disg_row:', disg_board) #disg_board - та же доска, только перевернутая для легкого взаимодействия!
+          disg_board[y][x] = self.board[x][y - 4]
+      for i in range(4):
+        for q in range(4):
+          row = disg_board[i]
+          elem = disg_board[i][q]
+          if elem > 0:
+            movement_type, index = self.check_row_left(row, elem)
+            if movement_type == 'trans':
+              disg_board[i][q] = 0
+              disg_board[i][index] = elem
+            elif movement_type == 'plus':
+              disg_board[i][q] = 0
+              disg_board[i][index] = elem * 2
+      for y in range(4):  # запись всех q элементов в disf_row[i]
+        for x in range(4):
+          self.board[y][x] = disg_board[x][y - 4]
     else:  #down
-      pass
+      disg_board = [[0] * self.width for _ in range(self.height)]
+      for y in range(4):  # запись всех q элементов в disf_row[i]
+        for x in range(4):
+          disg_board[y][x] = self.board[x][y - 4]
+      for i in range(4):
+        for q in range(3, -1, -1):
+          row = disg_board[i]
+          elem = disg_board[i][q]
+          if elem > 0:
+            movement_type, index = self.check_row_right(row, elem)
+            if movement_type == 'trans':
+              disg_board[i][q] = 0
+              disg_board[i][index] = elem
+      for y in range(4):  # запись всех q элементов в disf_row[i]
+        for x in range(4):
+          self.board[y][x] = disg_board[x][y - 4]
     #self.ones()
-    print('ТАБЛИЦА:')
-    for row in self.board:
-      print(row)
-  
+
   def ones(self,
            total=False):  #добавляет еще одну единицу на доску в путом месте
     br = False
@@ -165,7 +191,6 @@ class Board:  # класс, реализующий игровое поле
         for i in range(4):
           if 0 in self.board[i]:
             ready.append(i)
-        print(ready)
         y = randint(0, len(ready) - 1)
         row = ready[y]
         for elem in range(4):
@@ -244,16 +269,12 @@ while running:
       if event.key == pygame.K_ESCAPE:
         running = False
       elif event.key == pygame.K_UP:
-        print('up')
         board.move('up')
       elif event.key == pygame.K_DOWN:
-        print('down')
         board.move('down')
       elif event.key == pygame.K_RIGHT:
-        print('right')
         board.move('right')
       elif event.key == pygame.K_LEFT:
-        print('left')
         board.move('left')
   surf.fill(b_color)
   draw_button(surf)
