@@ -55,8 +55,8 @@ class Board:  # класс, реализующий игровое поле
                                             self.top + self.cell_size * y))
           elif elem == 16:
             color = pygame.Color(205, 133, 63)
-            text_mass = self.texting(1134, (self.left + self.cell_size * x,
-                                            self.top + self.cell_size * y))
+            text_mass = self.texting(1134, (self.left + self.cell_size * x * 1,5,
+                                            self.top + self.cell_size * y* 0.5))
           elif elem == 32:
             color = pygame.Color(210, 105, 30)
             text_mass = self.texting(1134, (self.left + self.cell_size * x,
@@ -73,7 +73,7 @@ class Board:  # класс, реализующий игровое поле
             color = pygame.Color(165, 42, 42)
             text_mass = self.texting(1134, (self.left + self.cell_size * x,
                                             self.top + self.cell_size * y))
-          elif elem == 256:
+          elif elem == 512:
             color = pygame.Color(128, 0, 0)
             text_mass = self.texting(1134, (self.left + self.cell_size * x,
                                             self.top + self.cell_size * y))
