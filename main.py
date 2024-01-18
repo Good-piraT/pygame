@@ -21,67 +21,51 @@ class Board:  # класс, реализующий игровое поле
     self.top = top
     self.cell_size = cell_size
 
-  def texting(self, number, coos):
-    x = coos[0]
-    y = coos[1]
-    font = pygame.font.Font(None, 10)
-    text = font.render(str(number), True, 'black')
-    text_x = x - text.get_width() // 2
-    text_y = y - text.get_height() // 2
-    return text, (text_x, text_y)
-
-  def render(self, screen, color='black'):  #рендер
+  def render(self, screen, color='black'):  #рендер таблицы
     for x in range(self.width):
       for y in range(self.height):
         elem = self.board[y][x]
-        if elem == 0:
+        if elem == 0: #рендер пустых клеток
           pygame.draw.rect(
               screen, 'black',
               (self.left + self.cell_size * x, self.top + self.cell_size * y,
                self.cell_size, self.cell_size), 2)
-        else:
-
-          if elem == 1:
-            color = pygame.Color(255, 228, 196)
-            text_mass = self.texting(1, (self.left + self.cell_size * x,
-                                         self.top + self.cell_size * y))
-          elif elem == 2:
-            color = pygame.Color(222, 184, 135)
-            text_mass = self.texting(2, (self.left + self.cell_size * x,
-                                         self.top + self.cell_size * y))
-          elif elem == 4:
-            color = pygame.Color(244, 164, 96)
-            text_mass = self.texting(1134, (self.left + self.cell_size * x,
-                                            self.top + self.cell_size * y))
-          elif elem == 16:
-            color = pygame.Color(205, 133, 63)
-            text_mass = self.texting(1134, (self.left + self.cell_size * x * 1,5,
-                                            self.top + self.cell_size * y* 0.5))
-          elif elem == 32:
-            color = pygame.Color(210, 105, 30)
-            text_mass = self.texting(1134, (self.left + self.cell_size * x,
-                                            self.top + self.cell_size * y))
-          elif elem == 64:
-            color = pygame.Color(160, 82, 45)
-            text_mass = self.texting(1134, (self.left + self.cell_size * x,
-                                            self.top + self.cell_size * y))
-          elif elem == 128:
-            color = pygame.Color(139, 69, 19)
-            text_mass = self.texting(1134, (self.left + self.cell_size * x,
-                                            self.top + self.cell_size * y))
-          elif elem == 256:
-            color = pygame.Color(165, 42, 42)
-            text_mass = self.texting(1134, (self.left + self.cell_size * x,
-                                            self.top + self.cell_size * y))
-          elif elem == 512:
-            color = pygame.Color(128, 0, 0)
-            text_mass = self.texting(1134, (self.left + self.cell_size * x,
-                                            self.top + self.cell_size * y))
+        else: #рендер занятых клеток
+          text_mass = [
+              surf,
+              (self.left + self.cell_size * x * 1.5,
+               self.top + self.cell_size * y)
+          ]
+          #цвет + текст(в будущем), в зависимости от значения клетки
+          match elem:
+            case 1:
+              color = pygame.Color(255, 228, 196)
+            case 2:
+              color = pygame.Color(222, 184, 135)
+            case 4:
+              color = pygame.Color(244, 164, 96)
+            case 8:
+              color = pygame.Color(205, 133, 63)
+            case 16:
+              color = pygame.Color(210, 105, 30)
+            case 32:
+              color = pygame.Color(160, 82, 45)
+            case 64:
+              color = pygame.Color(139, 69, 19)
+            case 128:
+              color = pygame.Color(165, 42, 42)
+            case 256:
+              color = pygame.Color(128, 0, 0)
+            case 512:
+              color = pygame.Color(255, 140, 0)
+            case 1024:
+              color = pygame.Color(255, 69, 0)
           pygame.draw.rect(
               screen, color,
               (self.left + self.cell_size * x, self.top + self.cell_size * y,
                self.cell_size, self.cell_size))
-          screen.blit(text_mass[0], text_mass[1])
+          text(screen, elem,
+               (self.left + self.cell_size * x, self.top + self.cell_size * y))
 
   def get_button(self, mouse_pos):
     mouse_x = mouse_pos[0]
@@ -95,50 +79,56 @@ class Board:  # класс, реализующий игровое поле
       self.board = [[0] * self.width for _ in range(self.height)]
       self.ones(True)
 
-  def check_row_right(self, row, elem):
+  def check_row_right_down(self, row, elem): 
+    #высчитывает тип действия для обьекта при движении вправо и вниз
     for i in range(3, -1, -1):
       if row[i] == 0:
-        return 'trans', i
+        return 'move', i
       if row[i] == elem:
-        return 'plus', i
+        return 'trans', i
     return 'no move', -1
 
-  def check_row_left(self, row, elem):
+  def check_row_left_up(self, row, elem): 
+    #высчитывает тип действия для обьекта при движении влево и вверх
     for i in range(4):
       if row[i] == 0:
         no_move = False
-        return 'trans', i
+        return 'move', i
       if row[i] == elem:
         no_move = False
-        return 'plus', i
+        return 'trans', i
     return 'no move', -1
 
   def move(self,
            direction):  #делает ход, двигая клетки в указанном направлении
-    break_rule = False
     if direction == 'right':
       for i in range(4):
         for q in range(3, -1, -1):
           row = self.board[i]
           elem = self.board[i][q]
           if elem > 0:
-            movement_type, index = self.check_row_right(row, elem)
-            if movement_type == 'trans':
+            movement_type, index = self.check_row_right_down(row, elem)
+            if q == 3:
+              movement_type = 'no move'
+            if movement_type == 'move':
               self.board[i][q] = 0
               self.board[i][index] = elem
+            elif movement_type == 'trans':
+              self.board[i][q] = 0
+              self.board[i][index] = elem * 2
     elif direction == 'left':
       for i in range(4):
         for q in range(4):
           row = self.board[i]
           elem = self.board[i][q]
           if elem > 0:
-            movement_type, index = self.check_row_left(row, elem)
+            movement_type, index = self.check_row_left_up(row, elem)
             if q == 0:
               movement_type = 'no move'
-            if movement_type == 'trans':
+            if movement_type == 'move':
               self.board[i][q] = 0
               self.board[i][index] = elem
-            elif movement_type == 'plus':
+            elif movement_type == 'trans':
               self.board[i][q] = 0
               self.board[i][index] = elem * 2
     elif direction == 'up':
@@ -151,13 +141,13 @@ class Board:  # класс, реализующий игровое поле
           row = disg_board[i]
           elem = disg_board[i][q]
           if elem > 0:
-            movement_type, index = self.check_row_left(row, elem)
+            movement_type, index = self.check_row_left_up(row, elem)
             if q == 0:
               movement_type = 'no move'
-            if movement_type == 'trans':
+            if movement_type == 'move':
               disg_board[i][q] = 0
               disg_board[i][index] = elem
-            elif movement_type == 'plus':
+            elif movement_type == 'trans':
               disg_board[i][q] = 0
               disg_board[i][index] = elem * 2
       for y in range(4):  # запись всех q элементов в disg_row[i]
@@ -173,14 +163,23 @@ class Board:  # класс, реализующий игровое поле
           row = disg_board[i]
           elem = disg_board[i][q]
           if elem > 0:
-            movement_type, index = self.check_row_right(row, elem)
-            if movement_type == 'trans':
+            movement_type, index = self.check_row_right_down(row, elem)
+            if q == 3:
+              movement_type = 'no move'
+            if movement_type == 'move':
               disg_board[i][q] = 0
               disg_board[i][index] = elem
+            elif movement_type == 'trans':
+              disg_board[i][q] = 0
+              disg_board[i][index] = elem * 2
       for y in range(4):  # запись всех q элементов в disg_row[i]
         for x in range(4):
           self.board[y][x] = disg_board[x][y - 4]
     self.ones()
+    print(direction)
+    print('ТАБЛИЦА:')
+    for i in range(4):
+      print(self.board[i])
 
   def ones(self,
            total=False):  #добавляет еще одну единицу на доску в путом месте
@@ -219,6 +218,16 @@ class Board:  # класс, реализующий игровое поле
 pygame.init()
 surf = pygame.display.set_mode((400, 500))
 pygame.display.set_caption('1024')
+
+
+def text(screen, number, coos):
+  x = coos[0]
+  y = coos[1]
+  font = pygame.font.Font(None, 100)
+  text = font.render(str(number), True, 'green')
+  text_x = x - text.get_width() // 2
+  text_y = y - text.get_height() // 2
+  screen.blit(text, (text_x, text_y))
 
 
 def zero_count(mass):  #подсчет нулей в массиве
