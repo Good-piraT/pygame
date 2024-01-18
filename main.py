@@ -67,7 +67,7 @@ class Board:  # класс, реализующий игровое поле
           text(screen, elem,
                (self.left + self.cell_size * x, self.top + self.cell_size * y))
 
-  def get_button(self, mouse_pos):
+  def get_button(self, mouse_pos): #детектит нажатие на кнопку
     mouse_x = mouse_pos[0]
     mouse_y = mouse_pos[1]
     x = mouse_x >= 87 and mouse_x <= 87 + 226
@@ -79,35 +79,36 @@ class Board:  # класс, реализующий игровое поле
       self.board = [[0] * self.width for _ in range(self.height)]
       self.ones(True)
 
-  def check_row_right_down(self, row, elem): 
-    #высчитывает тип действия для обьекта при движении вправо и вниз
-    for i in range(3, -1, -1):
-      if row[i] == 0:
-        return 'move', i
-      if row[i] == elem:
-        return 'trans', i
-    return 'no move', -1
-
-  def check_row_left_up(self, row, elem): 
-    #высчитывает тип действия для обьекта при движении влево и вверх
-    for i in range(4):
-      if row[i] == 0:
-        no_move = False
-        return 'move', i
-      if row[i] == elem:
-        no_move = False
-        return 'trans', i
-    return 'no move', -1
+  def check_row(self, direction, row, elem):
+    #высчитывает тип движения (двигаться, не двигаться, слиться с другой клеткой)
+    if direction == 'left' or 'up':
+      for i in range(4):
+        if row[i] == 0:
+          no_move = False
+          return 'move', i
+        if row[i] == elem:
+          no_move = False
+          return 'trans', i
+      return 'no move', -1
+    else: #right or down
+      for i in range(3, -1, -1):
+        if row[i] == 0:
+          return 'move', i
+        if row[i] == elem:
+          return 'trans', i
+      return 'no move', -1
 
   def move(self,
            direction):  #делает ход, двигая клетки в указанном направлении
+    #общая суть для правого и левого движения - просмотреть каждый ненулевой элемент,
+    #проверить его тип движения и двинуть, кудо нужно
     if direction == 'right':
       for i in range(4):
         for q in range(3, -1, -1):
           row = self.board[i]
           elem = self.board[i][q]
           if elem > 0:
-            movement_type, index = self.check_row_right_down(row, elem)
+            movement_type, index = self.check_row(direction, row, elem)
             if q == 3:
               movement_type = 'no move'
             if movement_type == 'move':
@@ -122,7 +123,7 @@ class Board:  # класс, реализующий игровое поле
           row = self.board[i]
           elem = self.board[i][q]
           if elem > 0:
-            movement_type, index = self.check_row_left_up(row, elem)
+            movement_type, index = self.check_row(direction, row, elem)
             if q == 0:
               movement_type = 'no move'
             if movement_type == 'move':
@@ -131,6 +132,8 @@ class Board:  # класс, реализующий игровое поле
             elif movement_type == 'trans':
               self.board[i][q] = 0
               self.board[i][index] = elem * 2
+    #вверх и них работают так же, но для начала они 'переворчивают' все игровое поле
+    #и пользуясь уже готовым алгоритмом действий и функциями высчитывают новое положение
     elif direction == 'up':
       disg_board = [[0] * self.width for _ in range(self.height)]
       for y in range(4):  # запись всех q элементов в disg_row[i]
@@ -141,7 +144,7 @@ class Board:  # класс, реализующий игровое поле
           row = disg_board[i]
           elem = disg_board[i][q]
           if elem > 0:
-            movement_type, index = self.check_row_left_up(row, elem)
+            movement_type, index = self.check_row(direction, row, elem)
             if q == 0:
               movement_type = 'no move'
             if movement_type == 'move':
@@ -163,7 +166,7 @@ class Board:  # класс, реализующий игровое поле
           row = disg_board[i]
           elem = disg_board[i][q]
           if elem > 0:
-            movement_type, index = self.check_row_right_down(row, elem)
+            movement_type, index = self.check_row(direction, row, elem)
             if q == 3:
               movement_type = 'no move'
             if movement_type == 'move':
