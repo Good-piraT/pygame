@@ -226,10 +226,10 @@ pygame.display.set_caption('1024')
 def text(screen, number, coos):
   x = coos[0]
   y = coos[1]
-  font = pygame.font.Font(None, 100)
-  text = font.render(str(number), True, 'green')
-  text_x = x - text.get_width() // 2
-  text_y = y - text.get_height() // 2
+  font = pygame.font.Font(None, 75)
+  text = font.render(str(number), True, 'black')
+  text_x = x - text.get_width() // 20
+  text_y = y - text.get_height() // 20
   screen.blit(text, (text_x, text_y))
 
 
@@ -270,7 +270,7 @@ board = Board(4, 4)
 board.set_view(0, 0, 100)
 b_color = pygame.Color(255, 245, 238)
 running = True
-board.ones()
+board.ones(True)
 while running:
   for event in pygame.event.get():
     if event.type == pygame.QUIT:
