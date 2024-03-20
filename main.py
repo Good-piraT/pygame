@@ -74,11 +74,13 @@ class Board:  # класс, реализующий игровое поле
                 if i > index:
                     new_mass.append(mass[i])
         return new_mass
+        #возвращает произвольного размера массив, который check_row берет для создания протокола действия
 
     def check_row(self, direction, row, elem):
         #высчитывает тип движения (двигаться, не двигаться, слиться с другой клеткой)
-        if direction == 'left' or 'up':
-            for i in range(4):
+        if direction == 'left' or direction == 'up':
+            print('i choose left/up mirror')
+            for i in range(len(row) - 1, -1, -1):
                 if row[i] == 0:
                     no_move = False
                     return 'move', i
@@ -87,11 +89,9 @@ class Board:  # класс, реализующий игровое поле
                     return 'trans', i
             return 'no move', -1
         else:  #right or down
-            for i in range(3, -1, -1):
-                if row[i] == 0:
-                    return 'move', i
-                if row[i] == elem:
-                    return 'trans', i
+            print('i choose right/down mirror')
+            for i in range(len(row)):
+                pass
             return 'no move', -1
 
     def move(self,
