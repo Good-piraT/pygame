@@ -65,6 +65,7 @@ class Board:  # класс, реализующий игровое поле
 
     def divide(self, mass, index, direction):
         new_mass = []
+        i_plus = 0
         if direction == 'left' or 'up':
             for i in range(4):
                 if i < index:
@@ -73,10 +74,12 @@ class Board:  # класс, реализующий игровое поле
             for i in range(4):
                 if i > index:
                     new_mass.append(mass[i])
-        return new_mass
+                else:
+                    i_plus += 1
+        return new_mass, i_plus
         #возвращает произвольного размера массив, который check_row берет для создания протокола действия
 
-    def check_row(self, direction, row, elem):
+    def check_row(self, direction, row, i_plus, elem):
         #высчитывает тип движения (двигаться, не двигаться, слиться с другой клеткой)
         if direction == 'left' or direction == 'up':
             print('i choose left/up mirror')
@@ -91,7 +94,12 @@ class Board:  # класс, реализующий игровое поле
         else:  #right or down
             print('i choose right/down mirror')
             for i in range(len(row)):
-                pass
+                if row[i] == 0:
+                    no_move = False
+                    return 'move', i+i_plus
+                if row[i] == elem:
+                    no_move = False
+                    return 'trans', i+i_plus
             return 'no move', -1
 
     def move(self,
@@ -104,9 +112,9 @@ class Board:  # класс, реализующий игровое поле
                     row = self.board[i]
                     elem = self.board[i][q]
                     if elem > 0:
-                        check_mass = self.divide(row, q, direction)
+                        check_mass, i_plus = self.divide(row, q, direction)
                         movement_type, index = self.check_row(
-                            direction, check_mass, elem)
+                            direction, check_mass, i_plus, elem)
                         if q == 3:
                             movement_type = 'no move'
                         if movement_type == 'move':
@@ -121,9 +129,9 @@ class Board:  # класс, реализующий игровое поле
                     row = self.board[i]
                     elem = self.board[i][q]
                     if elem > 0:
-                        check_mass = self.divide(row, q, direction)
+                        check_mass, i_plus = self.divide(row, q, direction)
                         movement_type, index = self.check_row(
-                            direction, check_mass, elem)
+                            direction, check_mass, i_plus, elem)
                         if q == 0:
                             movement_type = 'no move'
                         if movement_type == 'move':
@@ -144,9 +152,9 @@ class Board:  # класс, реализующий игровое поле
                     row = disg_board[i]
                     elem = disg_board[i][q]
                     if elem > 0:
-                        check_mass = self.divide(row, q, direction)
+                        check_mass, i_plus = self.divide(row, q, direction)
                         movement_type, index = self.check_row(
-                            direction, check_mass, elem)
+                            direction, check_mass, i_plus, elem)
                         if q == 0:
                             movement_type = 'no move'
                         if movement_type == 'move':
@@ -168,9 +176,9 @@ class Board:  # класс, реализующий игровое поле
                     row = disg_board[i]
                     elem = disg_board[i][q]
                     if elem > 0:
-                        check_mass = self.divide(row, q, direction)
+                        check_mass,i_plus = self.divide(row, q, direction)
                         movement_type, index = self.check_row(
-                            direction, check_mass, elem)
+                            direction, check_mass, i_plus, elem)
                         if q == 3:
                             movement_type = 'no move'
                         if movement_type == 'move':
