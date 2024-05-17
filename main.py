@@ -80,7 +80,14 @@ class Board:  # класс, реализующий игровое поле
     def turn(self, direction):
         self.disg_board = [[0] * self.width for _ in range(self.height)]
         if direction == 'right':
-            self.disg_board
+            self.disg_board = self.board
+        elif direction == "left":
+            for x in range(4):
+                for y in range(4):
+                    self.disg_board[x][y] = self.board[3 - x][y]
+        elif direction == "up":
+            
+        
 
     
     def move(self, direction):
