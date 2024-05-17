@@ -38,7 +38,7 @@ class Board:  # класс, реализующий игровое поле
                         (self.left + self.cell_size * x * 1.5,
                          self.top + self.cell_size * y)
                     ]
-                    #цвет + текст(в будущем), в зависимости от значения клетки
+                    #цвет + текст, в зависимости от значения клетки
                     if elem not in self.color_pallete:
                         self.color_pallete[elem] = (randint(0, 255),
                                                     randint(0, 255),
@@ -63,138 +63,147 @@ class Board:  # класс, реализующий игровое поле
             self.board = [[0] * self.width for _ in range(self.height)]
             self.ones(True)
 
-    def divide(self, mass, index, direction):
-        new_mass = []
-        i_plus = 0
-        if direction == 'left' or 'up':
-            for i in range(4):
-                if i < index:
-                    new_mass.append(mass[i])
-        else:  #right or down
-            for i in range(4):
-                if i > index:
-                    new_mass.append(mass[i])
-                else:
-                    i_plus += 1
-        return new_mass, i_plus
-        #возвращает произвольного размера массив, который check_row берет для создания протокола действия
+    def check(self, row, index_elem):
+        elem = row[index_elem]
+        type = 'error'
+        move_i = 1120
+        for i in range(index_elem + 1, 4):
+            if row[i] == elem or row[i] == 0:
+                if row[i - 1] == 0 or row[i - 1] == elem and row[i] == 0:
+                    type, move_i = 'move', i
+                elif row[i - 1] == elem:
+                    type, move_i = 'trans', i
+        return type, move_i
 
-    def check_row(self, direction, row, i_plus, elem):
-        #высчитывает тип движения (двигаться, не двигаться, слиться с другой клеткой)
-        if direction == 'left' or direction == 'up':
-            print('i choose left/up mirror')
-            for i in range(len(row) - 1, -1, -1):
-                if row[i] == 0:
-                    no_move = False
-                    return 'move', i
-                if row[i] == elem:
-                    no_move = False
-                    return 'trans', i
-            return 'no move', -1
-        else:  #right or down
-            print('i choose right/down mirror')
-            for i in range(len(row)):
-                if row[i] == 0:
-                    no_move = False
-                    return 'move', i+i_plus
-                if row[i] == elem:
-                    no_move = False
-                    return 'trans', i+i_plus
-            return 'no move', -1
+    # def move_right(self):
 
+    def turn(self, direction):
+        self.disg_board = [[0] * self.width for _ in range(self.height)]
+        if direction == 'right':
+            self.disg_board
+
+    
+    def move(self, direction):
+        turn(self, direction)
+        for i in range(4):
+            for q in range(3, -1, -1):
+                row = self.disg_board[i]
+                elem = self.disg_board[i][q]
+                if elem > 0:
+                    movement_type, index = self.check(row, q)
+                    if movement_type == 'error':
+                        print('ERROR WITH CHECK')
+                    # if q == 3:
+                    #     movement_type = 'no move'
+                    if movement_type == 'move':
+                        print(i, index)
+                        self.disg_board[i][q] = 0
+                        self.disg_board[i][index] = elem
+                    elif movement_type == 'trans':
+                        self.disg_board[i][q] = 0
+                        self.disg_board[i][index] = elem * 2
+        
     def move(self,
              direction):  #делает ход, двигая клетки в указанном направлении
         #общая суть для правого и левого движения - просмотреть каждый ненулевой элемент,
         #проверить его тип движения и двинуть, кудо нужно
-        if direction == 'right':
+"""        if direction == 'right':
             for i in range(4):
                 for q in range(3, -1, -1):
                     row = self.board[i]
                     elem = self.board[i][q]
                     if elem > 0:
-                        check_mass, i_plus = self.divide(row, q, direction)
-                        movement_type, index = self.check_row(
-                            direction, check_mass, i_plus, elem)
-                        if q == 3:
-                            movement_type = 'no move'
+                        movement_type, index = self.check(row, q)
+                        if movement_type == 'error':
+                            print('ERROR WITH CHECK')
+                        # if q == 3:
+                        #     movement_type = 'no move'
                         if movement_type == 'move':
+                            print(i, index)
                             self.board[i][q] = 0
                             self.board[i][index] = elem
                         elif movement_type == 'trans':
                             self.board[i][q] = 0
-                            self.board[i][index] = elem * 2
+                            self.board[i][index] = elem * 2"""
         elif direction == 'left':
+            self.left_board = [[0] * self.width for _ in range(self.height)]
+            for y in range(4):
+                for x in range(4):
+                    self.left_board[y][x] = self.board[3 - y][3 - x]
             for i in range(4):
                 for q in range(4):
-                    row = self.board[i]
-                    elem = self.board[i][q]
+                    row = self.left_board[i]
+                    elem = self.left_board[i][q]
                     if elem > 0:
-                        check_mass, i_plus = self.divide(row, q, direction)
-                        movement_type, index = self.check_row(
-                            direction, check_mass, i_plus, elem)
-                        if q == 0:
-                            movement_type = 'no move'
+                        movement_type, index = self.check(row, q)
+                        if movement_type == 'error':
+                            print('ERROR WITH CHECK')
+                        # if q == 0:
+                        #     movement_type = 'no move'
                         if movement_type == 'move':
-                            self.board[i][q] = 0
-                            self.board[i][index] = elem
+                            self.left_board[i][q] = 0
+                            self.left_board[i][index] = elem
                         elif movement_type == 'trans':
-                            self.board[i][q] = 0
-                            self.board[i][index] = elem * 2
-        #вверх и них работают так же, но для начала они 'переворчивают' все игровое поле
-        #и пользуясь уже готовым алгоритмом действий и функциями высчитывают новое положение
-        elif direction == 'up':
-            disg_board = [[0] * self.width for _ in range(self.height)]
-            for y in range(4):  # запись всех q элементов в disg_row[i]
+                            self.left_board[i][q] = 0
+                            self.left_board[i][index] = elem * 2
+            for y in range(4):
                 for x in range(4):
-                    disg_board[y][x] = self.board[x][y - 4]
-            for i in range(4):
-                for q in range(4):
-                    row = disg_board[i]
-                    elem = disg_board[i][q]
-                    if elem > 0:
-                        check_mass, i_plus = self.divide(row, q, direction)
-                        movement_type, index = self.check_row(
-                            direction, check_mass, i_plus, elem)
-                        if q == 0:
-                            movement_type = 'no move'
-                        if movement_type == 'move':
-                            disg_board[i][q] = 0
-                            disg_board[i][index] = elem
-                        elif movement_type == 'trans':
-                            disg_board[i][q] = 0
-                            disg_board[i][index] = elem * 2
-            for y in range(4):  # запись всех q элементов в disg_row[i]
-                for x in range(4):
-                    self.board[y][x] = disg_board[x][y - 4]
-        else:  #down
-            disg_board = [[0] * self.width for _ in range(self.height)]
-            for y in range(4):  # запись всех q элементов в disg_row[i]
-                for x in range(4):
-                    disg_board[y][x] = self.board[x][y - 4]
-            for i in range(4):
-                for q in range(3, -1, -1):
-                    row = disg_board[i]
-                    elem = disg_board[i][q]
-                    if elem > 0:
-                        check_mass,i_plus = self.divide(row, q, direction)
-                        movement_type, index = self.check_row(
-                            direction, check_mass, i_plus, elem)
-                        if q == 3:
-                            movement_type = 'no move'
-                        if movement_type == 'move':
-                            disg_board[i][q] = 0
-                            disg_board[i][index] = elem
-                        elif movement_type == 'trans':
-                            disg_board[i][q] = 0
-                            disg_board[i][index] = elem * 2
-            for y in range(4):  # запись всех q элементов в disg_row[i]
-                for x in range(4):
-                    self.board[y][x] = disg_board[x][y - 4]
-        self.ones()
-        print(direction)
-        print('ТАБЛИЦА:')
-        for i in range(4):
-            print(self.board[i])
+                    self.board[y][x] = self.left_board[3 - y][3 - x]
+        # #вверх и них работают так же, но для начала они 'переворчивают' все игровое поле
+        # #и пользуясь уже готовым алгоритмом действий и функциями высчитывают новое положение
+        # elif direction == 'up':
+        #     disg_board = [[0] * self.width for _ in range(self.height)]
+        #     for y in range(4):  # запись всех q элементов в disg_row[i]
+        #         for x in range(4):
+        #             disg_board[y][x] = self.board[3-x][y]
+        #     for i in range(4):
+        #         for q in range(4):
+        #             row = disg_board[i]
+        #             elem = disg_board[i][q]
+        #             if elem > 0:
+        #                 movement_type, index = self.check(row, q)
+        #                 if movement_type == 'error':
+        #                     print('ERROR WITH CHECK')
+        #                 # if q == 0:
+        #                 #     movement_type = 'no move'
+        #                 if movement_type == 'move':
+        #                     disg_board[i][q] = 0
+        #                     disg_board[i][index] = elem
+        #                 elif movement_type == 'trans':
+        #                     disg_board[i][q] = 0
+        #                     disg_board[i][index] = elem * 2
+        #     for y in range(4):  # запись всех q элементов в disg_row[i]
+        #         for x in range(4):
+        #             self.board[y][x] = disg_board[3-x][y]
+        # else:  #down
+        #     disg_board = [[0] * self.width for _ in range(self.height)]
+        #     for y in range(4):  # запись всех q элементов в disg_row[i]
+        #         for x in range(4):
+        #             disg_board[y][x] = self.board[3-x][y]
+        #     for i in range(4):
+        #         for q in range(3, -1, -1):
+        #             row = disg_board[i]
+        #             elem = disg_board[i][q]
+        #             if elem > 0:
+        #                 movement_type, index = self.check(row, q)
+        #                 if movement_type == 'error':
+        #                     print('ERROR WITH CHECK')
+        #                 # if q == 3:
+        #                 #     movement_type = 'no move'
+        #                 if movement_type == 'move':
+        #                     disg_board[i][q] = 0
+        #                     disg_board[i][index] = elem
+        #                 elif movement_type == 'trans':
+        #                     disg_board[i][q] = 0
+        #                     disg_board[i][index] = elem * 2
+        #     for y in range(4):  # запись всех q элементов в disg_row[i]
+        #         for x in range(4):
+        #             self.board[y][x] = disg_board[3-x][y]
+        #self.ones()
+        # print(direction)
+        # print('ТАБЛИЦА:')
+        # for i in range(4):
+        #     print(self.board[i])
 
     def ones(self,
              total=False):  #добавляет еще одну единицу на доску в путом месте
