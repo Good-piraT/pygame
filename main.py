@@ -86,7 +86,13 @@ class Board:  # класс, реализующий игровое поле
                 for y in range(4):
                     self.disg_board[x][y] = self.board[3 - x][y]
         elif direction == "up":
-            
+            for x in range(4):
+                for y in range(4):
+                    self.disg_board[x][y] = self.board[x][3 - y]
+        elif direction == "down":
+            for x in range(4):
+                for y in range(4):
+                    self.disg_board[x][y] = self.board[3 - x][3 - y]
         
 
     
