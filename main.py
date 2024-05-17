@@ -124,118 +124,17 @@ class Board:  # класс, реализующий игровое поле
                     movement_type, index = self.check(row, q)
                     if movement_type == 'error':
                         print('ERROR WITH CHECK')
-                    # if q == 3:
-                    #     movement_type = 'no move'
                     if movement_type == 'move':
                         print(i, index)
                         self.disg_board[i][q] = 0
                         self.disg_board[i][index] = elem
                     elif movement_type == 'trans':
                         self.disg_board[i][q] = 0
-                        self.disg_board[i][index] = elem * 2
+                        self.disg_board[i][index] = elem * 2  
         self.re_turn(direction)
+        self.ones()
         
-#     def move(self,
-#              direction):  #делает ход, двигая клетки в указанном направлении
-#         #общая суть для правого и левого движения - просмотреть каждый ненулевой элемент,
-#         #проверить его тип движения и двинуть, кудо нужно
-# """        if direction == 'right':
-#             for i in range(4):
-#                 for q in range(3, -1, -1):
-#                     row = self.board[i]
-#                     elem = self.board[i][q]
-#                     if elem > 0:
-#                         movement_type, index = self.check(row, q)
-#                         if movement_type == 'error':
-#                             print('ERROR WITH CHECK')
-#                         # if q == 3:
-#                         #     movement_type = 'no move'
-#                         if movement_type == 'move':
-#                             print(i, index)
-#                             self.board[i][q] = 0
-#                             self.board[i][index] = elem
-#                         elif movement_type == 'trans':
-#                             self.board[i][q] = 0
-#                             self.board[i][index] = elem * 2"""
-#         elif direction == 'left':
-#             self.left_board = [[0] * self.width for _ in range(self.height)]
-#             for y in range(4):
-#                 for x in range(4):
-#                     self.left_board[y][x] = self.board[3 - y][3 - x]
-#             for i in range(4):
-#                 for q in range(4):
-#                     row = self.left_board[i]
-#                     elem = self.left_board[i][q]
-#                     if elem > 0:
-#                         movement_type, index = self.check(row, q)
-#                         if movement_type == 'error':
-#                             print('ERROR WITH CHECK')
-#                         # if q == 0:
-#                         #     movement_type = 'no move'
-#                         if movement_type == 'move':
-#                             self.left_board[i][q] = 0
-#                             self.left_board[i][index] = elem
-#                         elif movement_type == 'trans':
-#                             self.left_board[i][q] = 0
-#                             self.left_board[i][index] = elem * 2
-#             for y in range(4):
-#                 for x in range(4):
-#                     self.board[y][x] = self.left_board[3 - y][3 - x]
-        # #вверх и них работают так же, но для начала они 'переворчивают' все игровое поле
-        # #и пользуясь уже готовым алгоритмом действий и функциями высчитывают новое положение
-        # elif direction == 'up':
-        #     disg_board = [[0] * self.width for _ in range(self.height)]
-        #     for y in range(4):  # запись всех q элементов в disg_row[i]
-        #         for x in range(4):
-        #             disg_board[y][x] = self.board[3-x][y]
-        #     for i in range(4):
-        #         for q in range(4):
-        #             row = disg_board[i]
-        #             elem = disg_board[i][q]
-        #             if elem > 0:
-        #                 movement_type, index = self.check(row, q)
-        #                 if movement_type == 'error':
-        #                     print('ERROR WITH CHECK')
-        #                 # if q == 0:
-        #                 #     movement_type = 'no move'
-        #                 if movement_type == 'move':
-        #                     disg_board[i][q] = 0
-        #                     disg_board[i][index] = elem
-        #                 elif movement_type == 'trans':
-        #                     disg_board[i][q] = 0
-        #                     disg_board[i][index] = elem * 2
-        #     for y in range(4):  # запись всех q элементов в disg_row[i]
-        #         for x in range(4):
-        #             self.board[y][x] = disg_board[3-x][y]
-        # else:  #down
-        #     disg_board = [[0] * self.width for _ in range(self.height)]
-        #     for y in range(4):  # запись всех q элементов в disg_row[i]
-        #         for x in range(4):
-        #             disg_board[y][x] = self.board[3-x][y]
-        #     for i in range(4):
-        #         for q in range(3, -1, -1):
-        #             row = disg_board[i]
-        #             elem = disg_board[i][q]
-        #             if elem > 0:
-        #                 movement_type, index = self.check(row, q)
-        #                 if movement_type == 'error':
-        #                     print('ERROR WITH CHECK')
-        #                 # if q == 3:
-        #                 #     movement_type = 'no move'
-        #                 if movement_type == 'move':
-        #                     disg_board[i][q] = 0
-        #                     disg_board[i][index] = elem
-        #                 elif movement_type == 'trans':
-        #                     disg_board[i][q] = 0
-        #                     disg_board[i][index] = elem * 2
-        #     for y in range(4):  # запись всех q элементов в disg_row[i]
-        #         for x in range(4):
-        #             self.board[y][x] = disg_board[3-x][y]
-        #self.ones()
-        # print(direction)
-        # print('ТАБЛИЦА:')
-        # for i in range(4):
-        #     print(self.board[i])
+
 
     def ones(self,
              total=False):  #добавляет еще одну единицу на доску в путом месте
