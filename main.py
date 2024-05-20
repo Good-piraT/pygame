@@ -122,15 +122,14 @@ class Board:  # класс, реализующий игровое поле
                 elem = self.disg_board[i][q]
                 if elem > 0:
                     movement_type, index = self.check(row, q)
-                    if movement_type == 'error':
-                        print('ERROR WITH CHECK')
                     if movement_type == 'move':
                         print(i, index)
                         self.disg_board[i][q] = 0
                         self.disg_board[i][index] = elem
                     elif movement_type == 'trans':
                         self.disg_board[i][q] = 0
-                        self.disg_board[i][index] = elem * 2  
+                        self.disg_board[i][index] = elem * 2 
+                        print("Check")
         self.re_turn(direction)
         self.ones()
         
@@ -172,7 +171,7 @@ class Board:  # класс, реализующий игровое поле
 
 pygame.init()
 surf = pygame.display.set_mode((400, 500))
-pygame.display.set_caption('1024')
+pygame.display.set_caption('Сынок')
 
 
 def text(screen, number, coos):
