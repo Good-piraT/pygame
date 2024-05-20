@@ -71,8 +71,8 @@ class Board:  # класс, реализующий игровое поле
             if row[i] == elem or row[i] == 0:
                 if row[i - 1] == 0 or row[i - 1] == elem and row[i] == 0:
                     type, move_i = 'move', i
-                elif row[i - 1] == elem:
-                    type, move_i = 'trans', i
+                # elif row[i - 1] == elem:
+                #     type, move_i = 'trans', i
         return type, move_i
 
     def turn(self, direction):
@@ -126,10 +126,16 @@ class Board:  # класс, реализующий игровое поле
                         print(i, index)
                         self.disg_board[i][q] = 0
                         self.disg_board[i][index] = elem
-                    elif movement_type == 'trans':
-                        self.disg_board[i][q] = 0
-                        self.disg_board[i][index] = elem * 2 
-                        print("Check")
+                        if self.disg_board[i][index + 1] == elem:
+                            self.disg_board[i][q] = 0
+                            self.disg_board[i][index] = elem * 2 
+        for kk in range(4):
+            for k in range(3):
+                if self.disg_board[kk][index + 1]
+                    # elif movement_type == 'trans':
+                    #     self.disg_board[i][q] = 0
+                    #     self.disg_board[i][index] = elem * 2 
+                        # print("Check")
         self.re_turn(direction)
         self.ones()
         
